@@ -10,7 +10,7 @@ const Login = ({ toggleRegister, errMsg, setErrMsg}) => {
     e.preventDefault();
     setErrMsg("");
     try {
-      const res = await fetch(import.meta.env.LOGIN_URL, {
+      const res = await fetch(import.meta.env.VITE_LOGIN_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

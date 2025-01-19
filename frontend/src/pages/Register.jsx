@@ -11,7 +11,7 @@ const Register = ({ toggleLogin, errMsg, setErrMsg }) => {
     e.preventDefault();
     setErrMsg("");
     try {
-      const res = await fetch(import.meta.env.REGISTER_URL, {
+      const res = await fetch(import.meta.env.VITE_REGISTER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,9 @@
 const  User  = require("../models/user.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
+const axios = require("axios")
+const {oauth2Client} = require("../utils/googleConfig");
+
 const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -57,7 +60,9 @@ const login = async (req, res) => {
 }
 
 
+
+
 module.exports = {
     login,
-    signup
+    signup,
 }

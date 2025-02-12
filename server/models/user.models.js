@@ -1,19 +1,17 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required: true,
-    },
-    email:{
+    name: {
         type: String,
-        required: true,
-        unique: true
     },
-    password:{
-        type:String,
-        required:true
+    email: {
+        type: String,
+    },
+    image: {
+        type: String
     }
-}, {timestamps: true});
+});
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model('social-login', userSchema)
+
+module.exports = User;

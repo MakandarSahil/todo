@@ -7,6 +7,7 @@ import LocationComponent from '../../components/LocationComponent';
 import Location from '../../components/Location';
 import Speech from '../../components/Speech';
 import TextToSpeech from '../../components/TextToSpeech';
+import MultiLang from '../../components/MultiLang';
 
 
 const MainPage = () => {
@@ -31,7 +32,9 @@ const MainPage = () => {
       </a> */}
 
       {/* <Speech /> */}
-      <TextToSpeech />
+      {/* <TextToSpeech /> */}
+
+      <MultiLang />
       
     </div>
   )

@@ -1,0 +1,7 @@
+{
+  "greeting": "Bonjour, Bienvenue {{channel}}",
+  "description": {
+    "line1": "Ceci est une application multilingue qui permet aux utilisateurs d'ajouter et de gérer leurs tâches.",
+    "line2": "Elle utilise React, Tailwind CSS et i18next pour l'internationalisation."
+  }
+}

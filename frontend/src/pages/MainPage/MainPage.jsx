@@ -3,6 +3,9 @@ import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 import CameraCapture from '../../components/CameraCapture';
+import LocationComponent from '../../components/LocationComponent';
+import Location from '../../components/Location';
+import Speech from '../../components/Speech';
 
 
 const MainPage = () => {
@@ -19,7 +22,14 @@ const MainPage = () => {
 
   return (
     <div>
-      <CameraCapture   />
+      {/* <CameraCapture   /> */}
+      {/* <Location /> */}
+
+      {/* <a href='tel:+919579891114'>
+        <button>Call</button> 
+      </a> */}
+
+      <Speech />
       
     </div>
   )

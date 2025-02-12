@@ -9,12 +9,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,  // Ensure the email is unique
     },
-    password: {
-        type: String,
-        required: true,
-    },
+    image: {
+        type: String
+    }
 });
 
-const User = mongoose.model('User', userSchema);  // Model name 'User'
+const User = mongoose.model('social-login', userSchema);  // Model name 'User'
 
 module.exports = User;

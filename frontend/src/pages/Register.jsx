@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext"
 import axios from "axios"
 
 export default function Register() {
+  document.title = "REGISTER PAGE | TODO"
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")

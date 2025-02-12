@@ -5,6 +5,8 @@ import Login from "../Login";
 import Register from "../Register";
 
 export default function Landing() {
+  document.title = "LANDING PAGE | TODO"
+
   const [isLoginView, setIsLoginView] = useState(true)
   const { isLoggedIn } = useAuth()
   const navigate = useNavigate()

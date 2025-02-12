@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext"
 import axios from "axios"
 
 export default function Login() {
+  document.title = "LOGIN PAGE | TODO"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")

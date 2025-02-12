@@ -1,72 +1,117 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {useGoogleLogin} from '@react-oauth/google'
-import { use } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
 import { googleAuth } from "../api";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
-const Register = ({ toggleLogin, errMsg, setErrMsg }) => {
+const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
+
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/MainPage");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const toggleLogin = () => {
+    navigate("/login")
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrMsg("");
+    setIsLoading(true);
+    setErr("");
+
     try {
-      const res = await fetch(import.meta.env.VITE_REGISTER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const response = await axios.post(
+        import.meta.env.VITE_REGISTER_URL,
+        { name, email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
-      if (!res.ok) {
-        setErrMsg("User Already exist");
-        return;
-      }
+      const data = response.data.token;
+      console.log(response.token);
+      localStorage.setItem("token", data);
+      setIsLoggedIn(true);
 
-      navigate("/home")
+      // const res = await fetch(import.meta.env.VITE_REGISTER_URL, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ name, email, password }),
+      // });
+
+      // if (!res.ok) {
+      //   setErrMsg("User Already exist");
+      //   return;
+      // }
+
+      // navigate("/home")
     } catch (err) {
-      console.error("Error during registration: ", err);
+      // console.error("Error during registration: ", err);
+      setErr("Please try Again")
+      console.log("Error during Register :" ,err);
+
+    }finally{
+      setIsLoading(false);
     }
   };
 
   const responseGoogle = async (authResult) => {
     try {
-      if(authResult["code"]){
+      if (authResult["code"]) {
         const result = await googleAuth(authResult.code);
-        const {email, name, image}= result.data.user;
-        const token = result.data.token
-        const obj ={email, name, token,image};
-        localStorage.setItem('user-info', JSON.stringify(obj))
-        navigate('/home')
+        const { email, name, image } = result.data.user;
+        const token = result.data.token;
+        const obj = { email, name, token, image };
+        localStorage.setItem("user-info", JSON.stringify(obj));
+        navigate("/home");
         console.log("result.data.user", result.data.user);
-      }else{
-        console.log(authResult)
-        throw new Error(authResult)
+      } else {
+        console.log(authResult);
+        throw new Error(authResult);
       }
       console.log(authResult);
-    }catch(err) {
-      console.log('error while requesting google code : ', err)
+    } catch (err) {
+      console.log("error while requesting google code : ", err);
     }
-  }
+  };
 
   const googleLogin = useGoogleLogin({
     onSuccess: responseGoogle,
     onError: responseGoogle,
-    flow : 'auth-code'
-  })
+    flow: "auth-code",
+  });
 
   return (
     <div className="w-full h-full text-black px-9 py-20 rounded-lg shadow-lg flex items-center">
       <div className="w-full flex flex-col gap-12">
         <div className="w-full h-[15%]">
-          <h1 className="text-[#023530] text-3xl font-medium mb-2">Create an account</h1>
+          <h1 className="text-[#023530] text-3xl font-medium mb-2">
+            Create an account
+          </h1>
           <h3 className="font-semibold">
             Already have an account?{" "}
-            <button className="text-blue-700" type="button" onClick={toggleLogin}>
+            <button
+              className="text-blue-700"
+              type="button"
+              onClick={toggleLogin}
+            >
               Login
             </button>
           </h3>
@@ -133,7 +178,7 @@ const Register = ({ toggleLogin, errMsg, setErrMsg }) => {
             >
               Sign Up
             </button>
-            {errMsg && <p className="text-red-500 mt-2">{errMsg}</p>}
+            {err && <p className="text-red-500 mt-2">{err}</p>}
           </form>
         </div>
       </div>

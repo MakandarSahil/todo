@@ -1,44 +1,86 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import { googleAuth } from "../api";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
-const Login = ({ toggleRegister, errMsg, setErrMsg }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
+
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/MainPage");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const toggleRegister = () => {
+    navigate("/register")
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrMsg("");
+    setIsLoading(true);
+    setErr("");
     try {
-      const res = await fetch(import.meta.env.VITE_LOGIN_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(import.meta.env.VITE_LOGIN_URL, 
+        {email, password},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          withCredentials: true,
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
-      if (!res.ok) {
-        setErrMsg("Invalid Credentials");
-        return;
-      }
+      const data = response.data.token;
+      console.log(response.token);
+      localStorage.setItem("token", data);
+      setIsLoggedIn(true);
 
-      navigate("/home")
+
     } catch (err) {
-      console.error("Error during login: ", err);
+      // console.error("Error during login: ", err);
+      let error = err.response.data.message;
+      setErr(error)
+      console.log("Error during Login :" ,err);
+    }finally{
+      setIsLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const responseGoogle = async (authResult) => {
     try {
-      // Replace this with your actual Google Sign-In implementation
-      const googleAuthUrl = import.meta.env.VITE_GOOGLE_AUTH_URL;
-      window.location.href = googleAuthUrl;
+      if (authResult["code"]) {
+        const result = await googleAuth(authResult.code);
+        const { email, name, image } = result.data.user;
+        const token = result.data.token;
+        const obj = { email, name, token, image };
+        localStorage.setItem("user-info", JSON.stringify(obj));
+        navigate("/home");
+        console.log("result.data.user", result.data.user);
+      } else {
+        console.log(authResult);
+        throw new Error(authResult);
+      }
+      console.log(authResult);
     } catch (err) {
-      console.error("Error during Google Sign-In: ", err);
-      setErrMsg("Google Sign-In failed");
+      console.log("error while requesting google code : ", err);
     }
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: responseGoogle,
+    onError: responseGoogle,
+    flow: "auth-code",
+  });
 
   return (
     <div className="w-full h-full text-black px-9 py-20 rounded-lg shadow-lg flex items-center">
@@ -55,7 +97,7 @@ const Login = ({ toggleRegister, errMsg, setErrMsg }) => {
         <div className="flex flex-col gap-4">
           <button
             type="button"
-            onClick={handleGoogleSignIn}
+            onClick={googleLogin}
             className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -106,7 +148,7 @@ const Login = ({ toggleRegister, errMsg, setErrMsg }) => {
             >
               Log in
             </button>
-            {errMsg && <p className="text-red-500 mt-2">{errMsg}</p>}
+            {err && <p className="text-red-500 mt-2">{err}</p>}
           </form>
         </div>
       </div>

@@ -6,6 +6,7 @@ import CameraCapture from '../../components/CameraCapture';
 import LocationComponent from '../../components/LocationComponent';
 import Location from '../../components/Location';
 import Speech from '../../components/Speech';
+import TextToSpeech from '../../components/TextToSpeech';
 
 
 const MainPage = () => {
@@ -29,7 +30,8 @@ const MainPage = () => {
         <button>Call</button> 
       </a> */}
 
-      <Speech />
+      {/* <Speech /> */}
+      <TextToSpeech />
       
     </div>
   )
